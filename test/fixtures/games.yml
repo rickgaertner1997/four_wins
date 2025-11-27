@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  board: 
+  current_player: 1
+  winner: 1
+  moves_count: 1
+
+two:
+  board: 
+  current_player: 1
+  winner: 1
+  moves_count: 1
