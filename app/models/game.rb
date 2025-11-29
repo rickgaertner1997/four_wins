@@ -21,7 +21,7 @@ class Game < ApplicationRecord
     moves_count >= BOARD_COLUMNS * BOARD_ROWS && winner_none?
   end
 
-  def drop_token(column_index, player)
+  def drop_token!(column_index)
     raise "Game is already finished" if finished?
     raise "Column is out of the range" unless column_index.between?(0, BOARD_COLUMNS - 1)
 
@@ -30,15 +30,15 @@ class Game < ApplicationRecord
 
     raise "All rows are full in this column" if selected_row.nil?
 
-    self.board[column_index][selected_row] = player
+    self.board[column_index][selected_row] = player_as_integer
 
     self.moves_count += 1
 
-    if check_for_win?(selected_row, column_index, player)
-      self.winner = current_player == "player_one" ? :one : :two
+    if check_for_win?(selected_row, column_index, player_as_integer)
+      self.winner = self.current_player_player_one? ? :one : :two
       return self.winner
     else
-   #   toggle_player!
+    toggle_player!
     end
 
     save!
@@ -57,29 +57,95 @@ class Game < ApplicationRecord
   def check_for_win?(row_index, column_index, player)
     return true if four_in_a_row?(row_index, player)
     return true if four_in_a_column?(column_index, player)
+    return true if four_in_diagonal?(row_index, column_index, player)
   end
 
   def four_in_a_row?(row_index, player)
-    strike = STRIKE_CONDITION
-    self.board.each do |column|
-      strike -= 1 if column[row_index] == player
-      strike = STRIKE_CONDITION if column[row_index] != player
-      return true if strike <= 0
-    end
-    return false
+    cells = self.board.map { |column| column[row_index] }
+    consecutive_four?(cells, player)
   end
 
   def four_in_a_column?(column_index, player)
-    strike = STRIKE_CONDITION
-    self.board[column_index].each do |row|
-      strike -= 1 if row == player
-      strike = STRIKE_CONDITION if row != player
-      return true if strike <= 0
+    cells = self.board[column_index]
+    consecutive_four?(cells, player)
+  end
+
+  def four_in_diagonal?(row_index, column_index, player)
+    # from left down to right up
+    step_for_column = 1
+    start_column = column_index - amount_of_strike_minus_the_placed_one
+    cells = abstract_relevant_cell_in_one_diagonal?(start_column, row_index, step_for_column)
+    return true if consecutive_four?(cells, player)
+    # from right down to left up
+    step_for_column = -1
+    start_column = column_index + amount_of_strike_minus_the_placed_one
+    cells = abstract_relevant_cell_in_one_diagonal?(start_column, row_index, step_for_column)
+    consecutive_four?(cells, player)
+  end
+
+  def abstract_relevant_cell_in_one_diagonal?(current_column, row_index, step_for_column)
+    cells = []
+    counter = 1
+    current_row = calculate_current_row(row_index)
+    step_for_row = 1
+
+    while counter <= maximum_loops
+      counter += 1
+      if column_in_range?(current_column) && row_in_range?(current_row)
+        cells << board[current_column][current_row]
+      end
+
+      current_column = adding_step(current_column, step_for_column)
+      current_row = adding_step(current_row, step_for_row)
     end
-    return false
+
+    cells
   end
 
-  def four_in_a_dialoginal?(row_index, column_index, player)
+  def adding_step(value, step)
+    value + step
   end
 
+  def calculate_current_row(row_index)
+    row_index - amount_of_strike_minus_the_placed_one
+  end
+
+  def column_in_range?(column)
+    column >= 0 && column < BOARD_COLUMNS
+  end
+
+  def row_in_range?(row)
+    row >= 0 && row < BOARD_ROWS
+  end
+
+  def maximum_loops
+    (amount_of_strike_minus_the_placed_one * 2) + 1
+  end 
+
+  def amount_of_strike_minus_the_placed_one 
+    STRIKE_CONDITION - 1
+  end
+
+  def consecutive_four?(cells, player)
+    strike = 0
+
+    cells.each do |cell|
+      if cell == player
+        strike += 1
+        return true if strike >= STRIKE_CONDITION
+      else
+        strike = 0
+      end
+    end
+
+    false
+  end
+
+  def toggle_player!
+    self.current_player = self.current_player_player_one? ? :player_two : :player_one
+  end
+
+  def player_as_integer
+    @_player_as_integer = self.current_player_player_one? ? 1 : 2
+  end
 end
