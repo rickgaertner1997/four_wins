@@ -1,83 +1,74 @@
-<!-- app/views/games/show.html.erb -->
-<div class="game-page">
-  <header class="game-header">
-    <h1>Connect Four</h1>
+<h1>Four Wins</h1>
 
-    <div class="game-meta">
+<div class="game-layout">
+  <div class="game-sidebar">
+    <div class="game-info">
       <p><strong>Game ID:</strong> <%= @game.id %></p>
 
       <% if @game.finished? %>
         <% if @game.draw? %>
-          <p class="status finished draw">It's a draw!</p>
+          <p class="status status-draw">It's a draw!</p>
         <% else %>
-          <p class="status finished">
+          <p class="status status-win">
             Winner:
-            <span class="winner"><%= @game.winner == "one" ? "Player One" : "Player Two" %></span>
+            <%= @game.winner_one? ? "Player One (red)" : "Player Two (yellow)" %>
           </p>
         <% end %>
       <% else %>
-        <p class="status ongoing">
+        <p class="status status-turn">
           Current turn:
-          <span class="<%= @game.current_player %>"><%= @game.current_player == "player_one" ? "Player One" : "Player Two" %></span>
+          <%= @game.current_player_player_one? ? "Player One (red)" : "Player Two (yellow)" %>
         </p>
       <% end %>
 
-      <p class="moves-count">Moves played: <%= @game.moves_count %></p>
+      <p><strong>Moves:</strong> <%= @game.moves_count %></p>
     </div>
 
     <div class="game-actions">
-      <%= link_to "Back to games list", games_path, class: "btn btn-secondary" %>
+      <%= link_to "Back to games", games_path, class: "btn btn-secondary" %>
 
       <%= button_to "Reset game",
                     reset_game_path(@game),
                     method: :post,
-                    class: "btn btn-warning",
-                    data: { turbo_confirm: "Are you sure you want to reset this game?" } %>
+                    data: { turbo_confirm: "Are you sure you want to reset this game?" },
+                    class: "btn btn-danger" %>
     </div>
-  </header>
+  </div>
 
-  <main class="game-main">
-    <% rows = @game.board.first.size %>
-    <% cols = @game.board.size %>
+  <div class="game-board-wrapper coin-cursor">
+    <!-- TOP BUTTONS -->
+    <div class="board-controls">
+      <% Game::BOARD_COLUMNS.times do |col| %>
+        <% column_full = @game.board[col].none?(0) %>
+        <% disabled = @game.finished? || column_full %>
 
-    <div class="board-wrapper">
-      <table class="board">
-        <tbody>
-          <% (rows - 1).downto(0) do |row| %>
-            <tr>
-              <% 0.upto(cols - 1) do |col| %>
-                <% cell = @game.board[col][row] %>
-
-                <% css_classes =
-                     case cell
-                     when 1 then "cell token player-one"
-                     when 2 then "cell token player-two"
-                     else       "cell token empty"
-                     end %>
-
-                <td class="<%= css_classes %>">
-                  <div class="token-inner"></div>
-                </td>
-              <% end %>
-            </tr>
-          <% end %>
-
-          <!-- Drop buttons row -->
-          <tr class="drop-row">
-            <% 0.upto(cols - 1) do |col| %>
-              <td class="drop-cell">
-                <% unless @game.finished? %>
-                  <%= button_to "↓",
-                                drop_token_game_path(@game, column_index: col),
-                                method: :post,
-                                class: "drop-button",
-                                form_class: "drop-form" %>
-                <% end %>
-              </td>
-            <% end %>
-          </tr>
-        </tbody>
-      </table>
+        <%= button_to drop_token_game_path(@game, column_index: col),
+                      method: :post,
+                      disabled: disabled,
+                      class: "column-button",
+                      title: "Drop token in column #{col + 1}" do %>
+          ▼
+        <% end %>
+      <% end %>
     </div>
-  </main>
+
+    <!-- BOARD GRID -->
+    <div class="board">
+      <% # rows are stored bottom-up (0 is bottom), but we DISPLAY top first %>
+      <% (Game::BOARD_ROWS - 1).downto(0) do |row| %>
+        <% Game::BOARD_COLUMNS.times do |col| %>
+          <% cell = @game.board[col][row] %>
+
+          <% cell_class =
+                case cell
+                when 1 then "cell token-player-one"
+                when 2 then "cell token-player-two"
+                else "cell token-empty"
+                end %>
+
+          <div class="<%= cell_class %>"></div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
 </div>
