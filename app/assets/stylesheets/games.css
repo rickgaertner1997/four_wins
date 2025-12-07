@@ -1,4 +1,11 @@
-/* Layout */
+.status-turn  { color: #2563eb; }
+.status-win   { color: #16a34a; }
+.status-draw  { color: #6b7280; }
+
+body {
+  background-color: #686666c5;
+  color: #030303;
+}
 
 .game-layout {
   display: flex;
@@ -19,18 +26,10 @@
   margin-bottom: 1rem;
 }
 
-/* Status */
-
 .status {
   margin: 0.5rem 0 0.75rem;
   font-weight: 600;
 }
-
-.status-turn  { color: #2563eb; }
-.status-win   { color: #16a34a; }
-.status-draw  { color: #6b7280; }
-
-/* Buttons (generic) */
 
 .game-actions .btn {
   display: inline-block;

@@ -43,7 +43,30 @@ class Game < ApplicationRecord
     save!
   end
 
+  def npc_turn?
+    current_player_player_two?
+  end
+
+  def npc_move!
+    raise "Not NPC's turn" unless npc_turn?
+    raise "Game is already finished" if finished?
+
+    column_index = choose_npc_column_by_random
+    drop_token!(column_index)
+  end
+
   private
+
+  def choose_npc_column_by_random
+    available = (0...BOARD_COLUMNS).select do |col|
+      board[col].include?(0)
+    end
+
+    raise "No available columns for NPC" if available.empty?
+
+    available.sample
+  end
+
 
   def winner_none?
     winner == "none"
