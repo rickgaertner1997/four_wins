@@ -1,0 +1,23 @@
+<h1>Four Wins</h1>
+
+<p><%= button_to "Start New Game", games_path, method: :post %></p>
+
+<h2>Active Games</h2>
+
+<ul>
+  <% @games.each do |game| %>
+    <li>
+      <%= link_to "Game ##{game.id}", game_path(game) %>
+
+      <% if game.finished? %>
+        – finished (
+        <%= game.winner %>
+        )
+      <% else %>
+        – in progress (current:
+        <%= game.current_player %>
+        )
+      <% end %>
+    </li>
+  <% end %>
+</ul>
