@@ -1,165 +1,148 @@
-.game-page {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 1rem;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #222;
-}
+/* Layout */
 
-.game-header {
+.game-layout {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-top: 1.5rem;
 }
 
-.game-header h1 {
-  font-size: 2rem;
-  margin: 0;
+.game-sidebar {
+  min-width: 220px;
 }
 
-.game-meta {
-  font-size: 0.95rem;
+.game-info {
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  margin-bottom: 1rem;
 }
+
+/* Status */
 
 .status {
-  margin: 0.25rem 0;
-}
-
-.status.ongoing span.player_one,
-.status.ongoing span.player-two {
+  margin: 0.5rem 0 0.75rem;
   font-weight: 600;
 }
 
-.status.finished {
-  font-weight: 600;
-}
+.status-turn  { color: #2563eb; }
+.status-win   { color: #16a34a; }
+.status-draw  { color: #6b7280; }
 
-.status.draw {
-  color: #555;
-}
+/* Buttons (generic) */
 
-.winner {
-  color: #0b7a00;
-}
-
-/* Buttons */
-.game-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.btn {
+.game-actions .btn {
   display: inline-block;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
   border: none;
   text-decoration: none;
-  cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 0.5rem;
 }
 
 .btn-secondary {
-  background: #e0e0e0;
-  color: #222;
+  background: #e5e7eb;
+  color: #111827;
 }
 
-.btn-warning {
-  background: #ffcc00;
-  color: #222;
+.btn-danger {
+  background: #ef4444;
+  color: white;
 }
 
-.game-main {
+.btn-secondary:hover { background: #d1d5db; }
+.btn-danger:hover    { background: #dc2626; }
+
+/* Board wrapper */
+
+.game-board-wrapper {
+  flex: 1;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* TOP BUTTON ROW */
+
+.board-controls {
+  display: grid;
+  grid-template-columns: repeat(7, 64px);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.column-button {
+  width: 64px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: #0f172a;
+  color: #f9fafb;
+  font-size: 1.2rem;
+  cursor: inherit; // use same cursor as parent .coin-cursor
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, background 0.1s ease-out;
+}
+
+.column-button:hover:enabled {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.25);
+  background: #020617;
+}
+
+.column-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Board grid */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(7, 64px);
+  grid-auto-rows: 64px;
+  gap: 8px;
+  padding: 12px;
+  background: #1d4ed8;
+  border-radius: 1rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
+
+/* Cells / tokens */
+
+.cell {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.board-wrapper {
-  display: inline-block;
-  padding: 1rem;
-  border-radius: 1rem;
-  background: #0057b7; /* blue background like classic Connect Four frame */
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+.token-empty      { /* just the empty hole */ }
+.token-player-one {
+  background: radial-gradient(circle at 30% 30%, #fecaca, #b91c1c);
+}
+.token-player-two {
+  background: radial-gradient(circle at 30% 30%, #fef9c3, #eab308);
 }
 
-.board {
-  border-collapse: collapse;
-}
+/* COIN CURSOR
+   - Apply this to the wrapper so both the buttons and the board
+     use the same cursor.
+*/
 
-.board td {
-  padding: 0;
-}
-
-/* Cells */
-.cell.token {
-  width: 70px;
-  height: 70px;
-  position: relative;
-}
-
-.token-inner {
-  width: 56px;
-  height: 56px;
-  margin: 7px;
-  border-radius: 50%;
-  box-sizing: border-box;
-  background: #eee; /* empty */
-  box-shadow:
-    inset 0 0 8px rgba(0, 0, 0, 0.2),
-    0 0 4px rgba(0, 0, 0, 0.2);
-}
-
-.cell.player-one .token-inner {
-  background: #ff4136; /* red */
-}
-
-.cell.player-two .token-inner {
-  background: #ffdc00; /* yellow */
-}
-
-/* Empty cells stay light */
-.cell.empty .token-inner {
-  background: #f4f4f4;
-}
-
-/* Drop buttons row */
-.drop-row .drop-cell {
-  text-align: center;
-  padding-top: 0.25rem;
-}
-
-.drop-form {
-  margin: 0;
-}
-
-.drop-button {
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-size: 1.3rem;
-  cursor: pointer;
-  padding: 0.3rem 0;
-  color: #ffffff;
-  transition: transform 0.08s ease-out, color 0.08s ease-out;
-}
-
-.drop-button:hover {
-  transform: translateY(-2px);
-  color: #fffbcc;
-}
-
-/* Responsive */
-@media (max-width: 700px) {
-  .cell.token {
-    width: 48px;
-    height: 48px;
-  }
-
-  .token-inner {
-    width: 38px;
-    height: 38px;
-    margin: 5px;
-  }
+.coin-cursor,
+.coin-cursor .board,
+.coin-cursor .board-controls,
+.coin-cursor .column-button {
+  cursor: image-url('coin_cursor.svg') 16 16, pointer;
 }

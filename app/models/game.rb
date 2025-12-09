@@ -36,7 +36,6 @@ class Game < ApplicationRecord
 
     if check_for_win?(selected_row, column_index, player_as_integer)
       self.winner = self.current_player_player_one? ? :one : :two
-      return self.winner
     else
     toggle_player!
     end
