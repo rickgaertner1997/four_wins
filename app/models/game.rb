@@ -7,10 +7,10 @@ class Game < ApplicationRecord
   enum :winner,         { none: 0, one: 1, two: 2 }, prefix: true
 
   def init_board
-    self.board ||= Array.new(BOARD_COLUMNS) { Array.new(BOARD_ROWS, 0) }
-    self.current_player ||= :player_one
-    self.winner ||= :none
-    self.moves_count ||= 0
+    self.board = Array.new(BOARD_COLUMNS) { Array.new(BOARD_ROWS, 0) }
+    self.current_player = :player_one
+    self.winner = :none
+    self.moves_count = 0
   end
 
   def finished?
@@ -47,7 +47,7 @@ class Game < ApplicationRecord
   private
 
   def winner_none?
-    return winner == 'none'
+    winner == "none"
   end
 
   def cycle_player
@@ -57,7 +57,7 @@ class Game < ApplicationRecord
   def check_for_win?(row_index, column_index, player)
     return true if four_in_a_row?(row_index, player)
     return true if four_in_a_column?(column_index, player)
-    return true if four_in_diagonal?(row_index, column_index, player)
+    true if four_in_diagonal?(row_index, column_index, player)
   end
 
   def four_in_a_row?(row_index, player)
@@ -120,9 +120,9 @@ class Game < ApplicationRecord
 
   def maximum_loops
     (amount_of_strike_minus_the_placed_one * 2) + 1
-  end 
+  end
 
-  def amount_of_strike_minus_the_placed_one 
+  def amount_of_strike_minus_the_placed_one
     STRIKE_CONDITION - 1
   end
 
