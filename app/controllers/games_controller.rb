@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [ :show, :drop_token, :reset ]
+  before_action :set_game, only: [ :show, :drop_token, :reset, :destroy ]
 
   def index
     @games = Game.all.order(created_at: :desc)
@@ -51,6 +51,15 @@ class GamesController < ApplicationController
     respond_to do |format|
       format.html { redirect_to @game, notice: "Game reset." }
       format.json { render json: game_state(@game), status: :ok }
+    end
+  end
+
+
+  def destroy
+    @game.destroy
+    respond_to do |format|
+      format.html { redirect_to @game, notice: "Game was destroyed" }
+      format.json { render json: , status: :ok }
     end
   end
 

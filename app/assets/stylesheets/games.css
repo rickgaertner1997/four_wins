@@ -2,11 +2,6 @@
 .status-win   { color: #16a34a; }
 .status-draw  { color: #6b7280; }
 
-body {
-  background-color: #686666c5;
-  color: #030303;
-}
-
 .game-layout {
   display: flex;
   gap: 2rem;
