@@ -25,13 +25,11 @@
     </div>
 
     <div class="game-actions">
-      <%= link_to "Back to games", games_path, class: "btn btn-secondary" %>
+      <%= link_to "Back to games list", games_path, class: "btn btn-secondary" %>
 
-      <%= button_to "Reset game",
-                    reset_game_path(@game),
-                    method: :post,
-                    data: { turbo_confirm: "Are you sure you want to reset this game?" },
-                    class: "btn btn-danger" %>
+      <%= button_to "Reset game", reset_game_path(@game), method: :post,
+        data: { turbo_confirm: "Are you sure you want to reset this game?" }, class: "btn btn-danger" %>
+
     </div>
   </div>
 
@@ -54,7 +52,7 @@
 
     <!-- BOARD GRID -->
     <div class="board">
-      <% # rows are stored bottom-up (0 is bottom), but we DISPLAY top first %>
+      <% # rows are stored bottom-up (0 is bottom), but top is displayed first %>
       <% (Game::BOARD_ROWS - 1).downto(0) do |row| %>
         <% Game::BOARD_COLUMNS.times do |col| %>
           <% cell = @game.board[col][row] %>
